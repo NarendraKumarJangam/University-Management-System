@@ -1,0 +1,2436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALTS University Management System</title>
+    <!-- Use Tailwind CSS from CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use React and ReactDOM from CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Use Babel to transform JSX in the browser -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        /* Custom scrollbar for notifications */
+        .notification-panel::-webkit-scrollbar {
+            width: 8px;
+        }
+        .notification-panel::-webkit-scrollbar-track {
+            background: #f3f4f6;
+        }
+        .notification-panel::-webkit-scrollbar-thumb {
+            background-color: #d1d5db;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+
+<script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // --- Simulated Data for the entire system ---
+        let database = {
+            users: [
+                { id: 'u1', email: 'divya@ALTS.edu', password: 'divya', role: 'admin', name: 'Divya' },
+                { id: 'u2', email: 'venkatreddy@ALTS.edu', password: 'reddy', role: 'faculty', name: 'Venkatreddy' },
+                { id: 'u3', email: 'gowthami@ALTS.edu', password: 'gowthu', role: 'student', name: 'Gowthami' },
+                { id: 'u4', email: 'accountant@ALTS.edu', password: 'accountant', role: 'accountant', name: 'Accountant' },
+                { id: 'u5', email: 'librarian@ALTS.edu', password: 'librarian', role: 'librarian', name: 'Libraran' },
+                { id: 'u6', email: 'shreya@gmail.edu', password: 'shreya123', role: 'student', name: 'A.sherya' },
+                { id: 'u7', email: 'sudha@gmail.edu', password: 'sudha123', role: 'student', name: 'A.Naga sudha' },
+                { id: 'u8', email: 'vadhu@gmail.edu', password: 'vadhu123', role: 'student', name: 'A.vandana' },
+                { id: 'u9', email: 'ramana@gmail.edu', password: 'ramana123', role: 'student', name: 'B.Ramanasree' },
+                { id: 'u10', email: 'harsha@ALITS.edu', password: 'harsha123', role: 'student', name: 'B.Harsha' },
+                { id: 'u11', email: 'sathi@gmail.edu', password: 'sathi123', role: 'student', name: 'B.Sateesh' },
+                { id: 'u12', email: 'kavya@gmail.edu', password: 'kavya123', role: 'student', name: 'c.Kavyasree' },
+                { id: 'u13', email: 'madhu@ALITS.edu', password: 'madhu123', role: 'student', name: 'c.Madhan' },
+                { id: 'u14', email: 'kusuma@gmail.edu', password: 'kusuma123', role: 'student', name: 'c.kusuma' },
+                { id: 'u15', email: 'malu@gmail.edu', password: 'malu123', role: 'student', name: 'D.Malavika' },
+                { id: 'u16', email: 'pujii@gmail.edu', password: 'puji123', role: 'student', name: 'D.pujitha' },
+                { id: 'u17', email: 'siri@gmail.edu', password: 'siri123', role: 'student', name: 'G.sirisha' },
+                { id: 'u18', email: 'anusha@gmail.edu', password: 'anu123', role: 'student', name: 'G.Anusha' },
+                { id: 'u19', email: 'likith@gmail.edu', password: 'likith123', role: 'student', name: 'G.Likith sai' },
+                { id: 'u20', email: 'jyothi@gmail.edu', password: 'jyo123', role: 'student', name: 'G.Jyothi' },
+                { id: 'u21', email: 'sathvika@gmail.edu', password: 'sathvi123', role: 'student', name: 'G.sathvika' },
+                { id: 'u22', email: 'bala@gmail.edu', password: 'bala123', role: 'student', name: 'G.Balakrishna' },
+                { id: 'u23', email: 'indhu@gmail.edu', password: 'indhu123', role: 'student', name: 'G.Indhu' },
+                { id: 'u24', email: 'narendra@gmail.edu', password: 'nari123', role: 'student', name: 'J.Narendra' },
+                { id: 'u25', email: 'ravi@gmail.edu', password: 'ravi123', role: 'student', name: 'J.Ravindra' },
+                { id: 'u26', email: 'suni@gmail.edu', password: 'suni123', role: 'student', name: 'J.Sunitha' },
+                { id: 'u27', email: 'chandhu@gmail.edu', password: 'chandhu123', role: 'student', name: 'p.Chandana' },
+                { id: 'u28', email: 'thiru@gmail.edu', password: 'thiru123', role: 'student', name: 'P.Thirumalanath' }
+
+
+            ],
+            students: [
+                { id: 1, name: 'A.Gowthami', email: 'gowthami@ALTS.edu', department: 'MCA', courses: ['WT101', 'IOT107'], grades: { 'WT101': 'A', 'IOT107': 'B+' } },
+                { id: 2, name: 'A.sherya', email: 'shreya@gmail.edu', department: 'MCA', courses: ['WT101', 'IOT107'], grades: { 'WT101': 'A', 'IOT107': 'B+' } },
+                { id: 3, name: 'A.sherya', email: 'shreya@gmail.edu', department: 'MCA', courses: ['WT101', 'IOT107'], grades: { 'WT101': 'A', 'IOT107': 'B+' } },
+                { id: 4, name: 'A.Naga sudha', email: 'sudha@gmail.edu', department: 'MCA', courses: ['WT101', 'IOT107'], grades: { 'WT101': 'C', 'IOT107': 'A' } },
+                { id: 5, name: 'A.vandana', email: 'vandhu@gmail.edu', department: 'MBA', courses: ['MAR106', 'ART105'], grades: { 'MAR106': 'B', 'ART105': 'A' } },
+                { id: 6, name: 'B.Ramanasree', email: 'ramana@gmail.edu', department: 'MBA', courses: ['MAR106', 'ART105'], grades: { 'MAR106': 'B', 'ART105': 'B' } },
+                { id: 7, name: 'B.Harsha', email: 'harsha@ALITS.edu', department: 'CSE', courses: ['DBMS108', 'BDT102'], grades: { 'DBMS108': 'B', 'BDT102': 'B' } },
+                { id: 8, name: 'B.Sateesh', email: 'sathi@gmail.edu', department: 'CSE', courses: ['DBMS108', 'BDT102'], grades: { 'DBMS108': 'B', 'BDT102': 'B' } },
+                { id: 9, name: 'c.Kavyasree', email: 'kavya@gmail.edu', department: 'MECH', courses: ['DAP103', 'ML104'], grades: { 'DAP103': 'B', 'ML104': 'B' } },
+                { id: 10, name: 'c.Madhan', email: 'madhu@ALITS.edu', department: 'MECH', courses: ['DAP103', 'ML104'], grades: { 'DAP103': 'B', 'ML104': 'B' } },
+                { id: 11, name: 'c.kusuma', email: 'kusuma@gmail.edu', department: 'CSE', courses: ['DBMS108', 'BDT102'], grades: { 'DBMS108': 'B', 'BDT102': 'B' } },
+                { id: 12, name: 'D.Malavika', email: 'malu@gmail.edu', department: 'MBA', courses: ['MAR106', 'ART105'], grades: { 'MAR106': 'B', 'ART105': 'B' } },
+                { id: 13, name: 'D.pujitha', email: 'pujii@gmail.edu', department: 'MCA', courses: ['WT101', 'IOT107'], grades: { 'WT101': 'B', 'IOT107': 'B' } },
+                { id: 14, name: 'G.sirisha', email: 'siri@gmail.edu', department: 'MCA', courses: ['WT101', 'IOT107'], grades: { 'WT101': 'B', 'IOT107': 'B' } },
+                { id: 15, name: 'G.Anusha', email: 'anusha@gmail.edu', department: 'CSE', courses: ['BDT102', 'DBMS108'], grades: { 'BDT102': 'B', 'DBMS108': 'B+' } },
+                { id: 16, name: 'G.Likith', email: 'likith@gmail.edu', department: 'CSE', courses: ['BDT102', 'DBMS108'], grades: { 'BDT102': 'B', 'DBMS108': 'A' } },
+                { id: 17, name: 'G.Jyothi', email: 'jyothi@gmail.edu', department: 'MBA', courses: ['ART105', 'MAR106'], grades: { 'ART105': 'C', 'MAR106': 'B+' } },
+                { id: 18, name: 'G.Sathvika', email: 'sathvika@gmail.edu', department: 'MCA', courses: ['WT101', 'IOT107'], grades: { 'WT101': 'A', 'IOT107': 'B' } },
+                { id: 19, name: 'J.Balakrishna', email: 'balakrishna@gmail.edu', department: 'MECH', courses: ['DAP103', 'ML104'], grades: { 'DAP103': 'A', 'ML104': 'B' } },
+                { id: 20, name: 'J.Indhu', email: 'indhu@gmail.edu', department: 'MCA', courses: ['WT101', 'IOT107'], grades: { 'WT101': 'A', 'IOT107': 'B' } },
+                { id: 21, name: 'J.Narendra', email: 'narendra@gmail.edu', department: 'MCA', courses: ['WT101', 'IOT107'], grades: { 'WT101': 'A', 'IOT107': 'B' } },
+                { id: 22, name: 'J.Ravindra', email: 'ravi@gmail.edu', department: 'CSE', courses: ['BDT102', 'DBMS108'], grades: { 'BDT102': 'A', 'DBMS108': 'B' } },
+                { id: 23, name: 'k.sunitha', email: 'suni@gmail.edu', department: 'MECH', courses: ['DAP103', 'ML104'], grades: { 'DAP103': 'A', 'ML104': 'B' } },
+                { id: 24, name: 'p.Chandana', email: 'chandhu@gmail.edu', department: 'MECH', courses: ['DAP103', 'ML104'], grades: { 'DAP103': 'A', 'ML104': 'B' } },
+                { id: 25, name: 'p.Thirumalanath', email: 'thiru@gmail.edu', department: 'MCA', courses: ['WT101', 'IOT107'], grades: { 'WT101': 'A', 'IOT107': 'B' } },
+
+
+
+            
+                
+
+            ],
+            faculty: [
+                { id: 101, name: 'venkat reddy', email: 'venkatreddy@uni.edu', department: 'MCA', coursesTaught: ['WT101'] },
+                { id: 102, name: 'syamala', email: 'syamala@uni.edu', department: 'MCA', coursesTaught: ['IOT107'] },
+                { id: 103, name: 'surendra', email: 'surendra@ALITS.edu', department: 'MECH Engineering', coursesTaught: ['DAP103'] },
+                { id: 104, name: 'Sudharshan', email: 'sudharshan@uni.edu', department: 'MCA', coursesTaught: ['PY109']},
+                { id: 105, name: 'Narendra', email: 'narendra@uni.edu', department: 'MBA', coursesTaught: ['ART105']},
+                { id: 106, name: 'Muntaj', email: 'muntaj@ALTS.edu', department: 'CSE', coursesTaught: ['BDT102']},
+                { id: 107, name: 'Prateesha', email: 'prateesha@uni.edu', department: 'MBA', coursesTaught: ['MAR106']},
+                { id: 108, name: 'vidhya', email: 'vidhya@uni.edu', department: 'CSE', coursesTaught: ['DBMS108']},
+                { id: 109, name: 'sravani', email: 'sravani@uni.edu', department: 'MBA', coursesTaught: ['ART05']},
+                { id: 110, name: 'Raghavendra', email: 'raghavendra@uni.edu', department: 'MCA', coursesTaught: ['IOT107']},
+
+            ],
+            departments: [
+                { id: 'd1', name: 'MCA' },
+                { id: 'd2', name: 'MBA' },
+                { id: 'd3', name: 'CSE' },
+                { id: 'd4', name: 'MECH' },
+
+            ],
+            courses: [
+                { id: 'c1', code: 'WT101', name: 'web tehnologies', department: 'MCA' },
+                { id: 'c2', code: 'BDT102', name: 'Big Data Technologies', department: 'CSE' },
+                { id: 'c3', code: 'DAP103', name: 'Devops and  Agile Programming', department: 'MECH Engineering' },
+                { id: 'c4', code: 'ML104', name: 'Machine Learning', department: 'MECH Engineering' },
+                { id: 'c5', code: 'ART105', name: 'Art History', department: 'MBA' },
+                { id: 'c6', code: 'MAR106', name: 'marketing', department: 'MBA' },
+                { id: 'c7', code: 'IOT107', name: 'Internet of Things', department: 'MCA' },
+                { id: 'c8', code: 'DBMS108', name: 'Data Base Manegment System', department: 'CSE' },
+                { id: 'c9', code: 'PY109', name: 'python', department: 'MCA' },
+            ],
+            attendance: {
+                'shreya@gmail.edu': {
+                    'WT101': { total: 100, attended: 87 },
+                    'IOT107': { total: 100, attended: 78 },
+                },
+                'sudha@gmail.edu': {
+                    'WT101': { total: 100, attended: 92 },
+                    'IOT107': { total: 100, attended: 89 },
+                },
+                'vadhu@gmail.edu': {
+                    'MAR106': { total: 100, attended: 67 },
+                    'ENG101': { total: 100, attended: 78 },
+                },
+                'ramana@gmail.edu': {
+                    'MAR106': { total: 100, attended: 83 },
+                    'CS101': { total: 100, attended: 79 },
+                },
+                'harsha@ALITS.edu': {
+                    'DBMS106': { total: 100, attended: 78 },
+                    'BDT102': { total: 100, attended: 89 },
+                },
+                'sathi@gmail.edu': {
+                    'DBMS106': { total: 100, attended: 89 },
+                    'BDT102': { total: 100, attended: 78 },
+                },
+                'kavya@gmail.edu': {
+                    'DAP103': { total: 100, attended: 91 },
+                    'ML104': { total: 100, attended: 87 },
+                },
+                'madhu@ALITS.edu': {
+                    'DAP103': { total: 100, attended: 77 },
+                     'ML104': { total: 100, attended: 89 },
+                },
+                'kusuma@gmail.edu': {
+                    'DBMS106': { total: 100, attended: 79 },
+                    'BDT102': { total: 100, attended: 87 },
+                },
+                'malu@gmail.edu': {
+                    'MAR106': { total: 100, attended: 78 },
+                    'ART105': { total: 100, attended: 88 },
+                
+                },
+                'pujii@gmail.edu': {
+                    'WT101': { total: 100, attended: 87 },
+                    'IOT107': { total: 100, attended: 71 },
+                },
+                'siri@gmail.edu': {
+                    'WT101': { total: 100, attended: 86 },
+                    'IOT107': { total: 100, attended: 80 },
+                },
+                'anusha@gmail.edu': {
+                    'BDT102': { total: 100, attended: 86 },
+                    'DBMS108': { total: 100, attended: 80 },
+                },        
+                'likith@gmail.edu': {
+                    'BDT102': { total: 100, attended: 86 },
+                    'DBMS102': { total: 100, attended: 80 },
+                },       
+                'jyothi@gmail.edu': {
+                    'ART105': { total: 100, attended: 86 },
+                    'MAR106': { total: 100, attended: 80 },
+                },        
+                'sathika@gmail.edu': {
+                    'WT101': { total: 100, attended: 86 },
+                    'IOT107': { total: 100, attended: 80 },
+                },        
+                'balakrishna@gmail.edu': {
+                    'DAP103': { total: 100, attended: 86 },
+                    'ML104': { total: 100, attended: 80 },
+                },
+                'indhu@gmail.edu': {
+                    'WT101': { total: 100, attended: 86 },
+                    'IOT107': { total: 100, attended: 80 },
+                },     
+                'narendra@gmail.edu': {
+                    'WT101': { total: 100, attended: 86 },
+                    'IOT107': { total: 100, attended: 80 },
+                },     
+                'ravi@gmail.edu': {
+                    'BDT102': { total: 100, attended: 86 },
+                    'DBMS108': { total: 100, attended: 80 },
+                },     
+                'suni.edu': {
+                    'DAP103': { total: 100, attended: 86 },
+                    'ML104': { total: 100, attended: 80 },
+                },     
+                'chandhu@gmail.edu': {
+                    'DAP103': { total: 100, attended: 86 },
+                    'ML104': { total: 100, attended: 80 },
+                },       
+                'thiru@gmail.edu': {
+                    'WT101': { total: 100, attended: 86 },
+                    'IOT107': { total: 100, attended: 80 },
+                }                   
+            },
+            notifications: [
+                { id: 1, subject: 'Mandatory Wearing ID Cards by Staff and Students', date: '11/09/2025', source: 'Principal', link: '#' },
+                { id: 2, subject: 'Course registration for hostel students is open', date: '31/07/2025', source: 'Principal', link: '#' },
+                { id: 3, subject: 'ALITS - Students Scholarship for the year 2025-2026', date: '28/07/2025', source: 'Principal', link: '#' },
+                { id: 4, subject: 'E Bus Pass for the Academic year 2025-2026', date: '28/07/2025', source: 'Principal', link: '#' },
+                { id: 5, subject: 'Classes of Monsoon semester for day scholars will start from 28/07/25', date: '22/07/2025', source: 'Principal', link: '#' },
+                { id: 6, subject: 'All students completing exams on July 22, 2025', date: '22/07/2025', source: 'Principal', link: '#' },
+                { id: 7, subject: 'Course Requirements - Before Clearing no due', date: '16/07/2025', source: 'Principal', link: '#' },
+            ]
+        };
+
+        // --- New domain data for additional modules ---
+        database.offers = [
+            { id: 1, title: 'Merit Scholarship 2025', description: '50% tuition for top performers', active: true, createdBy: 'admin' },
+            { id: 2, title: 'Book Voucher', description: 'Free books for first-year students', active: true, createdBy: 'admin' }
+        ];
+
+        database.financialRecords = [
+            // sample records: { id, studentEmail, term, amountDue, amountPaid, status }
+            { id: 1, studentEmail: 'ravi@uni.edu', term: 'Fall 2025', amountDue: 2000, amountPaid: 1500, status: 'partial' }
+        ];
+
+        database.infraIssues = [
+            // sample issues: { id, raisedBy, subject, description, status, assignedTo, date }
+            { id: 1, raisedBy: 'gowthami@ALITS.edu', subject: 'Broken projector in CS101', description: 'Projector not powering on', status: 'open', assignedTo: null, date: '2025-10-01' }
+        ];
+
+        database.disciplinary = [
+            // sample disciplinary records: { id, studentEmail, issue, status, actions }
+            { id: 1, studentEmail: 'charlie@uni.edu', issue: 'Plagiarism in assignment', status: 'investigating', actions: [] }
+        ];
+
+        // Exams, per-exam results and hall tickets
+        database.exams = [
+            { 
+                id: 1, 
+                courseCode: 'WT101', 
+                title: 'Web Technologies Mid Term', 
+                date: '2025-11-15', 
+                description: 'Mid-term examination covering HTML, CSS, JavaScript fundamentals',
+                createdBy: 'venkatreddy@ALTS.edu'
+            },
+            { 
+                id: 2, 
+                courseCode: 'IOT107', 
+                title: 'IoT Final Examination', 
+                date: '2025-12-20', 
+                description: 'Final examination covering sensor networks, embedded systems, and IoT protocols',
+                createdBy: 'syamala@uni.edu'
+            },
+            { 
+                id: 3, 
+                courseCode: 'DBMS108', 
+                title: 'Database Management Systems Quiz', 
+                date: '2025-11-05', 
+                description: 'Quiz on SQL fundamentals and database design',
+                createdBy: 'vidhya@uni.edu'
+            },
+            {
+                id: 4,
+                courseCode: 'PY109',
+                title: 'Python Programming Final',
+                date: '2025-12-15',
+                description: 'Final examination covering Python programming concepts',
+                createdBy: 'sudharshan@uni.edu'
+            }
+        ];
+        database.examResults = [
+            { 
+                id: 1, 
+                examId: 1, 
+                studentEmail: 'gowthami@ALTS.edu', 
+                grade: 'A'
+            },
+            { 
+                id: 2, 
+                examId: 1, 
+                studentEmail: 'shreya@gmail.edu', 
+                grade: 'B+'
+            },
+            { 
+                id: 3, 
+                examId: 2, 
+                studentEmail: 'sudha@gmail.edu', 
+                grade: 'A'
+            },
+            {
+                id: 4,
+                examId: 3,
+                studentEmail: 'kavya@gmail.edu',
+                grade: 'B'
+            },
+            {
+                id: 5,
+                examId: 4,
+                studentEmail: 'gowthami@ALTS.edu',
+                grade: 'A+'
+            }
+        ];
+        database.hallTickets = [
+            { 
+                id: 1, 
+                examId: 1, 
+                studentEmail: 'gowthami@ALTS.edu', 
+                fileName: 'WT101_MidTerm_HallTicket.pdf', 
+                fileDataUrl: 'data:application/pdf;base64,example_base64_data', 
+                createdBy: 'venkatreddy@ALTS.edu'
+            },
+            { 
+                id: 2, 
+                examId: 2, 
+                studentEmail: 'sudha@gmail.edu', 
+                fileName: 'IOT107_Final_HallTicket.pdf', 
+                fileDataUrl: 'data:application/pdf;base64,example_base64_data', 
+                createdBy: 'syamala@uni.edu'
+            },
+            {
+                id: 3,
+                examId: 3,
+                studentEmail: 'kavya@gmail.edu',
+                fileName: 'DBMS108_Quiz_HallTicket.pdf',
+                fileDataUrl: 'data:application/pdf;base64,example_base64_data',
+                createdBy: 'vidhya@uni.edu'
+            },
+            {
+                id: 4,
+                examId: 4,
+                studentEmail: 'gowthami@ALTS.edu',
+                fileName: 'PY109_Final_HallTicket.pdf',
+                fileDataUrl: 'data:application/pdf;base64,example_base64_data',
+                createdBy: 'sudharshan@uni.edu'
+            }
+        ];
+
+        // Smart notifications created by admin (can be scheduled)
+        database.smartNotifications = [
+            { 
+                id: 1, 
+                subject: 'Upcoming Web Technologies Mid Term', 
+                message: 'Reminder: Web Technologies Mid Term exam is scheduled for November 15, 2025. Please ensure you have your hall ticket.',
+                createdBy: 'divya@ALTS.edu',
+                createdAt: '2025-10-15T10:00:00Z',
+                sendDate: '2025-11-10T09:00:00Z',
+                source: 'Exam System'
+            },
+            { 
+                id: 2, 
+                subject: 'Hall Tickets Available', 
+                message: 'Hall tickets for IoT Final Examination are now available for download. Please collect them from your student portal.',
+                createdBy: 'divya@ALTS.edu',
+                createdAt: '2025-12-01T08:30:00Z',
+                sendDate: '2025-12-15T09:00:00Z',
+                source: 'Admin'
+            },
+            {
+                id: 3,
+                subject: 'DBMS Quiz Results Published',
+                message: 'Results for the Database Management Systems Quiz have been published. You can check your grades in the results section.',
+                createdBy: 'divya@ALTS.edu',
+                createdAt: '2025-11-10T14:00:00Z',
+                sendDate: '2025-11-10T15:00:00Z',
+                source: 'Results System'
+            },
+            {
+                id: 4,
+                subject: 'Python Programming Final Exam Schedule',
+                message: 'The Python Programming final exam is scheduled for December 15, 2025. Please review the syllabus and preparation guidelines.',
+                createdBy: 'divya@ALTS.edu',
+                createdAt: '2025-11-25T11:00:00Z',
+                sendDate: '2025-12-10T09:00:00Z',
+                source: 'Exam System'
+            }
+        ];
+
+        // Persistent course materials (used by faculty MyCourses)
+        database.courseMaterials = database.courseMaterials || {
+            'WT101': [
+                { id: 1, title: 'Introduction to HTML5', type: 'lecture', description: 'Basic concepts of HTML5 and web structure', date: '2025-10-15', attachments: [] },
+            ],
+            'IOT107': [],
+            'DBMS108': []
+        };
+
+        // --- Main App Component ---
+        const App = () => {
+            const [currentPage, setCurrentPage] = useState('login');
+            const [user, setUser] = useState(null);
+
+            const navigate = (page, userData = null) => {
+                setCurrentPage(page);
+                if (userData) {
+                    setUser(userData);
+                }
+            };
+
+            const renderPage = () => {
+                switch (currentPage) {
+                    case 'dashboard':
+                        return <Dashboard navigate={navigate} user={user} />;
+                    default:
+                        return <Login navigate={navigate} />;
+                }
+            };
+
+            return (
+                <div className="min-h-screen bg-gray-100">
+                    {renderPage()}
+                </div>
+            );
+        };
+
+        // --- Login Component ---
+        const Login = ({ navigate }) => {
+            const [email, setEmail] = useState('');
+            const [password, setPassword] = useState('');
+            const [error, setError] = useState('');
+
+            const handleLogin = (e) => {
+                e.preventDefault();
+                setError('');
+                const foundUser = database.users.find(u => u.email === email && u.password === password);
+                if (foundUser) {
+                    navigate('dashboard', foundUser);
+                } else {
+                    setError('Invalid email or password.');
+                }
+            };
+
+            return (
+                <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
+                        <div>
+                            <h1 className="text-3xl font-bold mb-6 text-gray-800 text-center">ALTS Portal</h1>
+                            <form onSubmit={handleLogin} className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Email</label>
+                                    <input
+                                        type="email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                        placeholder="Enter your email"
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Password</label>
+                                    <input
+                                        type="password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                        placeholder="Enter your password"
+                                        required
+                                    />
+                                </div>
+                                {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+                                <button
+                                    type="submit"
+                                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                >
+                                    Sign In
+                                </button>
+                            </form>
+                            <div className="mt-6 text-center text-sm text-gray-500">
+                                <p>Try these credentials:</p>
+                                <ul className="mt-2 text-left inline-block space-y-1">
+                                    <li>Admin: <span className="font-mono">divya@ALTS.edu</span> / divya</li>
+                                    <li>Faculty: <span className="font-mono">venkatreddy@ALTS.edu</span> / reddy</li>
+                                     <li>Student (Example): <span className="font-mono">gowthami@ALTS.edu</span> / gowthu</li>
+                                     <li>Student (Example): <span className="font-mono">sudha@gmail.edu</span> / sudha123</li>
+                                     <li>Student (Example): <span className="font-mono">vadhu@gmail.edu</span> / vadhu123</li>
+                                    <li>Accountant: <span className="font-mono">accountant@ALTS.edu</span> / accountant</li>
+                                    <li>Librarian: <span className="font-mono">librarian@ALTS.edu</span> / librarian</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- Dashboard Component ---
+        const Dashboard = ({ navigate, user }) => {
+            const [activeTab, setActiveTab] = useState('home');
+
+            const handleLogout = () => {
+                // Clear the user state and navigate back to the login page
+                navigate('login', null);
+            };
+
+            const renderDashboardContent = () => {
+                switch (activeTab) {
+                    case 'home':
+                        return <HomeDashboard />;
+                    case 'student-management':
+                        return <StudentManagement />;
+                    case 'faculty-management':
+                        return <FacultyManagement />;
+                    case 'my-courses':
+                        return <MyCourses user={user} />;
+                    case 'my-profile':
+                        return <MyProfile user={user} />;
+                    case 'enrollment':
+                        return <Enrollment user={user} />;
+                    case 'attendance':
+                        return <Attendance user={user} />;
+                    case 'offer':
+                        return <Offers user={user} />;
+                    case 'financial-record':
+                        return <FinancialRecord user={user} />;
+                    case 'raise-infra-issue':
+                        return <RaiseInfraIssue user={user} />;
+                    case 'disciplinary':
+                        return <Disciplinary user={user} />;
+                    case 'exams-results':
+                        return <ExamsResults user={user} />;
+                    default:
+                        return <p className="p-4 text-gray-600">This section is not yet implemented.</p>;
+                }
+            };
+
+            return (
+                <div className="flex min-h-screen bg-gray-100">
+                    <Sidebar user={user} activeTab={activeTab} setActiveTab={setActiveTab} handleLogout={handleLogout} />
+                    <div className="flex-1 flex flex-col">
+                        <header className="bg-white shadow-sm p-4 flex justify-end items-center space-x-4">
+                            <span className="text-gray-700 font-semibold">{user.name}</span>
+                            <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+                                <i className="fas fa-user text-gray-500"></i>
+                            </div>
+                            <button
+                                onClick={handleLogout}
+                                className="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                            >
+                                Log Out
+                            </button>
+                        </header>
+                        <main className="flex-1 p-8 overflow-y-auto">
+                            <div className="flex flex-col lg:flex-row space-y-8 lg:space-y-0 lg:space-x-8 h-full">
+                                <div className="flex-1 w-full lg:w-3/4">
+                                        {renderDashboardContent()}
+                                    </div>
+                                    <div className="w-full lg:w-1/4">
+                                        <NotificationsPanel user={user} />
+                                    </div>
+                            </div>
+                        </main>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- Sidebar Component ---
+        const Sidebar = ({ user, activeTab, setActiveTab, handleLogout }) => {
+            const navItems = [
+                { id: 'home', label: 'Home', icon: 'fa-home', roles: ['admin', 'faculty', 'student', 'accountant', 'librarian'] },
+                { id: 'my-courses', label: 'My Course', icon: 'fa-book-open', roles: ['faculty', 'student'] },
+                { id: 'student-management', label: 'Student Management', icon: 'fa-user-graduate', roles: ['admin'] },
+                { id: 'faculty-management', label: 'Faculty Management', icon: 'fa-chalkboard-teacher', roles: ['admin'] },
+                { id: 'enrollment', label: 'Enrollment', icon: 'fa-user-plus', roles: ['admin', 'student'] },
+                { id: 'attendance', label: 'Attendance', icon: 'fa-calendar-check', roles: ['admin', 'faculty', 'student'] },
+                { id: 'exams-results', label: 'Exams & Results', icon: 'fa-scroll', roles: ['admin', 'faculty', 'student'] },
+                { id: 'financial-record', label: 'Financial Record', icon: 'fa-receipt', roles: ['admin', 'accountant', 'student'] },
+                { id: 'disciplinary', label: 'Disciplinary', icon: 'fa-gavel', roles: ['admin', 'faculty'] },
+                { id: 'offer', label: 'Offer', icon: 'fa-gift', roles: ['admin', 'student'] },
+                { id: 'raise-infra-issue', label: 'Raise Infra Issue', icon: 'fa-tools', roles: ['admin', 'faculty', 'student'] },
+                { id: 'my-profile', label: 'My Profile', icon: 'fa-user', roles: ['admin', 'faculty', 'student', 'accountant', 'librarian'] },
+            ];
+            
+            const filteredNavItems = navItems.filter(item => item.roles.includes(user.role));
+
+            return (
+                <div className="bg-gray-800 text-gray-100 w-64 flex flex-col">
+                    <div className="p-4 flex items-center justify-center border-b border-gray-700">
+                        <span className="text-xl font-bold">ALTS Portal</span>
+                    </div>
+                    <nav className="flex-1 overflow-y-auto">
+                        <ul>
+                            {filteredNavItems.map(item => (
+                                <li key={item.id} className="relative">
+                                    <button
+                                        onClick={() => setActiveTab(item.id)}
+                                        className={`w-full text-left px-6 py-3 flex items-center space-x-3 transition-colors duration-200 ease-in-out ${activeTab === item.id ? 'bg-gray-700 text-white' : 'hover:bg-gray-700'}`}
+                                    >
+                                        {activeTab === item.id && <div className="absolute left-0 w-1 h-full bg-green-500 rounded-r-md"></div>}
+                                        <i className={`fas ${item.icon} w-5`}></i>
+                                        <span>{item.label}</span>
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    </nav>
+                </div>
+            );
+        };
+
+        // --- Home Dashboard Component with Calendar and Attendance Confirmation ---
+        const HomeDashboard = () => {
+            const [currentDate, setCurrentDate] = useState(new Date());
+
+            const daysInMonth = (date) => new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+            const firstDayOfMonth = (date) => new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+
+            const handlePrevMonth = () => {
+                setCurrentDate(prevDate => {
+                    const newDate = new Date(prevDate);
+                    newDate.setMonth(prevDate.getMonth() - 1);
+                    return newDate;
+                });
+            };
+
+            const handleNextMonth = () => {
+                setCurrentDate(prevDate => {
+                    const newDate = new Date(prevDate);
+                    newDate.setMonth(prevDate.getMonth() + 1);
+                    return newDate;
+                });
+            };
+
+            const renderCalendarDays = () => {
+                const totalDays = daysInMonth(currentDate);
+                const firstDay = firstDayOfMonth(currentDate);
+                const days = [];
+                const today = new Date();
+                const isCurrentMonth = currentDate.getMonth() === today.getMonth() && currentDate.getFullYear() === today.getFullYear();
+
+                // Empty cells for the start of the month
+                for (let i = 0; i < firstDay; i++) {
+                    days.push(<div key={`empty-${i}`} className="p-2"></div>);
+                }
+
+                // Days of the month
+                for (let day = 1; day <= totalDays; day++) {
+                    const isToday = isCurrentMonth && day === today.getDate();
+                    const isEventDay = false; // Placeholder for future events
+                    days.push(
+                        <div key={day} className={`p-2 text-center text-sm rounded-md ${isToday ? 'bg-blue-500 text-white font-bold' : ''} ${isEventDay ? 'bg-yellow-300 text-black' : ''}`}>
+                            {day}
+                        </div>
+                    );
+                }
+                return days;
+            };
+
+            return (
+                <div className="flex flex-col space-y-8">
+                    {/* Holiday & Events Panel */}
+                    <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-xl font-bold text-gray-800">HOLIDAY & EVENTS</h3>
+                            <button className="text-gray-500 hover:text-gray-800"><i className="fas fa-sync-alt"></i></button>
+                        </div>
+                        <div className="flex items-center justify-center mb-4 text-center">
+                            <button onClick={handlePrevMonth} className="p-2 text-gray-500 hover:bg-gray-100 rounded-full"><i className="fas fa-chevron-left"></i></button>
+                            <div className="flex-1 mx-4">
+                                <span className="text-2xl font-semibold">{currentDate.toLocaleString('default', { month: 'long', year: 'numeric' })}</span>
+                                <span className="text-gray-500 block">{currentDate.toLocaleDateString()}</span>
+                            </div>
+                            <button onClick={handleNextMonth} className="p-2 text-gray-500 hover:bg-gray-100 rounded-full"><i className="fas fa-chevron-right"></i></button>
+                        </div>
+                        <div className="grid grid-cols-7 gap-1 text-center font-semibold text-gray-500">
+                            <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                        </div>
+                        <div className="grid grid-cols-7 gap-1 mt-2">
+                            {renderCalendarDays()}
+                        </div>
+                    </div>
+
+                    {/* Attendance Confirmation Panel */}
+                    <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-xl font-bold text-gray-800">ATTENDANCE CONFIRMATION</h3>
+                            <button className="text-gray-500 hover:text-gray-800"><i className="fas fa-sync-alt"></i></button>
+                        </div>
+                        <div className="text-center p-8 text-gray-500 italic">
+                            <i className="fas fa-bell-slash text-4xl mb-4"></i>
+                            <p>No Notification</p>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- Smart Notifications Panel ---
+        const NotificationsPanel = ({ user }) => {
+            const [notes, setNotes] = useState(database.notifications || []);
+            const [smartNotes, setSmartNotes] = useState(database.smartNotifications || []);
+            const [showForm, setShowForm] = useState(false);
+            const [form, setForm] = useState({ subject: '', message: '', sendDate: '', sendInDaysBeforeExam: '', target: 'all' });
+            const [scheduledList, setScheduledList] = useState([]);
+
+            useEffect(() => {
+                setNotes(database.notifications || []);
+                setSmartNotes(database.smartNotifications || []);
+                refreshScheduled();
+            }, []);
+
+            // Refresh scheduled notifications list for admin
+            const refreshScheduled = () => {
+                setScheduledList((database.smartNotifications || []).slice().sort((a,b)=> new Date(a.sendDate) - new Date(b.sendDate)));
+            };
+
+            // compute active smart notifications (sendDate <= today)
+            const activeSmartNotifications = (database.smartNotifications || []).filter(sn => {
+                if (!sn.sendDate) return true; // immediate
+                const today = new Date();
+                const send = new Date(sn.sendDate);
+                // compare date-only
+                return send.setHours(0,0,0,0) <= today.setHours(0,0,0,0);
+            });
+
+            // Admin creates a new smart notification
+            const createSmartNotification = (e) => {
+                e.preventDefault();
+                if (user.role !== 'admin') return;
+                const id = Math.max(0, ...(database.smartNotifications || []).map(n=>n.id)) + 1;
+                let sendDate = form.sendDate || null;
+                // if sendInDaysBeforeExam provided and target === 'exams' or 'all-exams', schedule per exam
+                if (form.sendInDaysBeforeExam) {
+                    const days = Number(form.sendInDaysBeforeExam);
+                    // create one notification per exam with computed sendDate
+                    (database.exams || []).forEach(exam => {
+                        const examDate = new Date(exam.date);
+                        if (!isNaN(examDate)) {
+                            const sd = new Date(examDate);
+                            sd.setDate(sd.getDate() - days);
+                            const nid = Math.max(0, ...(database.smartNotifications || []).map(n=>n.id)) + 1 + Math.floor(Math.random()*1000);
+                            const rec = { id: nid, subject: form.subject + ' — ' + (exam.title || exam.courseCode), message: form.message, createdBy: user.email, createdAt: new Date().toISOString(), sendDate: sd.toISOString().slice(0,10), source: 'Admin' };
+                            database.smartNotifications.push(rec);
+                        }
+                    });
+                } else {
+                    const rec = { id, subject: form.subject, message: form.message, createdBy: user.email, createdAt: new Date().toISOString(), sendDate: sendDate ? sendDate : null, source: 'Admin' };
+                    database.smartNotifications.push(rec);
+                }
+                setSmartNotes([...database.smartNotifications]);
+                setForm({ subject: '', message: '', sendDate: '', sendInDaysBeforeExam: '', target: 'all' });
+                setShowForm(false);
+                refreshScheduled();
+            };
+
+            const deleteScheduled = (id) => {
+                if (user.role !== 'admin') return;
+                database.smartNotifications = database.smartNotifications.filter(n => n.id !== id);
+                setSmartNotes([...database.smartNotifications]);
+                refreshScheduled();
+            };
+
+            return (
+                <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200 h-full flex flex-col">
+                    <div className="flex items-center justify-between mb-3">
+                        <h3 className="text-lg font-bold text-gray-800">Notifications</h3>
+                        <div className="flex items-center space-x-2">
+                            {user.role === 'admin' && (
+                                <button onClick={() => setShowForm(s => !s)} className="py-1 px-2 bg-green-600 text-white rounded text-sm">New</button>
+                            )}
+                            <button onClick={() => { setNotes(database.notifications); setSmartNotes(database.smartNotifications); refreshScheduled(); }} className="text-gray-500 hover:text-gray-800"><i className="fas fa-sync-alt"></i></button>
+                        </div>
+                    </div>
+
+                    {/* Active notifications (system + smart) */}
+                    <div className="notification-panel space-y-3 overflow-y-auto flex-1">
+                        {(activeSmartNotifications || []).length > 0 && (
+                            <div>
+                                <div className="text-sm font-semibold text-gray-700 mb-2">Smart Notices</div>
+                                {(activeSmartNotifications || []).map(sn => (
+                                    <div key={sn.id} className="border-b border-gray-200 pb-2 mb-2">
+                                        <div className="text-sm text-gray-600">{sn.source} — {sn.sendDate ? sn.sendDate : sn.createdAt.slice(0,10)}</div>
+                                        <div className="font-medium text-gray-900">{sn.subject}</div>
+                                        <div className="text-sm text-gray-700">{sn.message}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {notes.map(note => (
+                            <div key={note.id} className="border-b border-gray-200 pb-2">
+                                <div className="text-sm text-gray-600">{note.source} — {note.date}</div>
+                                <div className="font-medium text-gray-900">{note.subject}</div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Admin form to create smart notifications */}
+                    {user.role === 'admin' && showForm && (
+                        <form onSubmit={createSmartNotification} className="mt-3 border-t pt-3 space-y-2">
+                            <input value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })} placeholder="Subject" className="w-full px-2 py-1 border rounded" required />
+                            <textarea value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} placeholder="Message" className="w-full px-2 py-1 border rounded" required />
+                            <div className="flex space-x-2">
+                                <input type="date" value={form.sendDate} onChange={e => setForm({ ...form, sendDate: e.target.value })} className="px-2 py-1 border rounded" />
+                                <input type="number" min="1" placeholder="Days before exam" value={form.sendInDaysBeforeExam} onChange={e => setForm({ ...form, sendInDaysBeforeExam: e.target.value })} className="px-2 py-1 border rounded w-36" />
+                            </div>
+                            <div className="flex justify-end space-x-2">
+                                <button type="button" onClick={() => setShowForm(false)} className="px-3 py-1 bg-gray-200 rounded">Cancel</button>
+                                <button type="submit" className="px-3 py-1 bg-indigo-600 text-white rounded">Send / Schedule</button>
+                            </div>
+                        </form>
+                    )}
+
+                    {/* Admin scheduled list */}
+                    {user.role === 'admin' && scheduledList.length > 0 && (
+                        <div className="mt-3 border-t pt-2 text-sm">
+                            <div className="font-semibold text-gray-700 mb-2">Scheduled</div>
+                            <ul className="space-y-1 max-h-40 overflow-y-auto">
+                                {scheduledList.map(s => (
+                                    <li key={s.id} className="flex justify-between items-start">
+                                        <div>
+                                            <div className="text-gray-800">{s.subject}</div>
+                                            <div className="text-xs text-gray-500">Send: {s.sendDate || s.createdAt.slice(0,10)}</div>
+                                        </div>
+                                        <div className="ml-2 flex flex-col space-y-1">
+                                            <button onClick={() => deleteScheduled(s.id)} className="px-2 py-1 bg-red-500 text-white rounded text-xs">Delete</button>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // --- Student Management Component (CRUD) ---
+        const StudentManagement = () => {
+            const [students, setStudents] = useState(database.students);
+            const [searchTerm, setSearchTerm] = useState('');
+            const [showModal, setShowModal] = useState(false);
+            const [currentStudent, setCurrentStudent] = useState(null);
+            const [showDeleteModal, setShowDeleteModal] = useState(false);
+            const [deleteTargetId, setDeleteTargetId] = useState(null);
+
+            useEffect(() => {
+                const filtered = database.students.filter(s =>
+                    s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    s.email.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+                setStudents(filtered);
+            }, [searchTerm]);
+
+            const handleAddStudent = (newStudent) => {
+                const newId = Math.max(...database.students.map(s => s.id), 0) + 1;
+                const studentWithId = { ...newStudent, id: newId };
+                database.students.push(studentWithId);
+                setStudents([...database.students]);
+                setShowModal(false);
+            };
+
+            const handleUpdateStudent = (updatedStudent) => {
+                database.students = database.students.map(s =>
+                    s.id === updatedStudent.id ? updatedStudent : s
+                );
+                setStudents([...database.students]);
+                setShowModal(false);
+            };
+
+            const handleDeleteStudent = () => {
+                database.students = database.students.filter(s => s.id !== deleteTargetId);
+                setStudents([...database.students]);
+                setShowDeleteModal(false);
+                setDeleteTargetId(null);
+            };
+
+            const openAddModal = () => {
+                setCurrentStudent(null);
+                setShowModal(true);
+            };
+
+            const openEditModal = (student) => {
+                setCurrentStudent(student);
+                setShowModal(true);
+            };
+
+            const openDeleteModal = (id) => {
+                setDeleteTargetId(id);
+                setShowDeleteModal(true);
+            };
+
+            return (
+                <div className="p-6 bg-white rounded-lg shadow-md space-y-4">
+                    <h3 className="text-xl font-bold text-gray-800">Student Management</h3>
+                    <div className="space-y-4">
+                        <button
+                            onClick={openAddModal}
+                            className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                        >
+                            Add New Student
+                        </button>
+                        <input
+                            type="text"
+                            placeholder="Search students..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        />
+                        <ul className="divide-y divide-gray-200">
+                            {students.length > 0 ? (
+                                students.map(student => (
+                                    <li key={student.id} className="py-4">
+                                        <div className="flex justify-between items-start">
+                                            <div>
+                                                <div className="text-lg font-medium text-gray-900">{student.name}</div>
+                                                <div className="text-sm text-gray-500">{student.email}</div>
+                                                <div className="text-sm text-gray-500 mt-1">
+                                                    <p className="font-medium text-gray-700">{student.department}</p>
+                                                    <p className="italic text-xs">Courses: {student.courses.join(', ')}</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex space-x-2">
+                                                <button
+                                                    onClick={() => openEditModal(student)}
+                                                    className="py-1 px-2 text-xs border border-transparent rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700"
+                                                >
+                                                    Edit
+                                                </button>
+                                                <button
+                                                    onClick={() => openDeleteModal(student.id)}
+                                                    className="py-1 px-2 text-xs border border-transparent rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700"
+                                                >
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </li>
+                                ))
+                            ) : (
+                                <li className="py-4 text-gray-500 italic">No student records match your search.</li>
+                            )}
+                        </ul>
+                    </div>
+                    {showModal && (
+                        <StudentFormModal
+                            student={currentStudent}
+                            onClose={() => setShowModal(false)}
+                            onSave={currentStudent ? handleUpdateStudent : handleAddStudent}
+                        />
+                    )}
+                    {showDeleteModal && (
+                        <DeleteConfirmationModal
+                            onClose={() => setShowDeleteModal(false)}
+                            onConfirm={handleDeleteStudent}
+                            message="Are you sure you want to delete this student record? This action cannot be undone."
+                        />
+                    )}
+                </div>
+            );
+        };
+        
+        // (Removed faculty-only MyCourses development block. Unified MyCourses component appears later.)
+
+        // --- Faculty Management Component (CRUD) ---
+        const FacultyManagement = () => {
+            const [faculty, setFaculty] = useState(database.faculty);
+            const [searchTerm, setSearchTerm] = useState('');
+            const [showModal, setShowModal] = useState(false);
+            const [currentFaculty, setCurrentFaculty] = useState(null);
+            const [showDeleteModal, setShowDeleteModal] = useState(false);
+            const [deleteTargetId, setDeleteTargetId] = useState(null);
+
+            useEffect(() => {
+                const filtered = database.faculty.filter(f =>
+                    f.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    f.email.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+                setFaculty(filtered);
+            }, [searchTerm]);
+
+            const handleAddFaculty = (newFaculty) => {
+                const newId = Math.max(...database.faculty.map(f => f.id), 0) + 1;
+                const facultyWithId = { ...newFaculty, id: newId };
+                database.faculty.push(facultyWithId);
+                setFaculty([...database.faculty]);
+                setShowModal(false);
+            };
+
+            const handleUpdateFaculty = (updatedFaculty) => {
+                database.faculty = database.faculty.map(f =>
+                    f.id === updatedFaculty.id ? updatedFaculty : f
+                );
+                setFaculty([...database.faculty]);
+                setShowModal(false);
+            };
+
+            const handleDeleteFaculty = () => {
+                database.faculty = database.faculty.filter(f => f.id !== deleteTargetId);
+                setFaculty([...database.faculty]);
+                setShowDeleteModal(false);
+                setDeleteTargetId(null);
+            };
+
+            const openAddModal = () => {
+                setCurrentFaculty(null);
+                setShowModal(true);
+            };
+
+            const openEditModal = (f) => {
+                setCurrentFaculty(f);
+                setShowModal(true);
+            };
+
+            const openDeleteModal = (id) => {
+                setDeleteTargetId(id);
+                setShowDeleteModal(true);
+            };
+
+            return (
+                <div className="p-6 bg-white rounded-lg shadow-md space-y-4">
+                    <h3 className="text-xl font-bold text-gray-800">Faculty Management</h3>
+                    <div className="space-y-4">
+                        <button
+                            onClick={openAddModal}
+                            className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700"
+                        >
+                            Add New Faculty
+                        </button>
+                        <input
+                            type="text"
+                            placeholder="Search faculty..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                        />
+                        <ul className="divide-y divide-gray-200">
+                            {faculty.length > 0 ? (
+                                faculty.map(f => (
+                                    <li key={f.id} className="py-4">
+                                        <div className="flex justify-between items-start">
+                                            <div>
+                                                <div className="text-lg font-medium text-gray-900">{f.name}</div>
+                                                <div className="text-sm text-gray-500">{f.email}</div>
+                                                <div className="text-sm text-gray-500 mt-1">
+                                                    <p className="font-medium text-gray-700">{f.department}</p>
+                                                    <p className="italic text-xs">Courses Taught: {f.coursesTaught.join(', ')}</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex space-x-2">
+                                                <button
+                                                    onClick={() => openEditModal(f)}
+                                                    className="py-1 px-2 text-xs border border-transparent rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700"
+                                                >
+                                                    Edit
+                                                </button>
+                                                <button
+                                                    onClick={() => openDeleteModal(f.id)}
+                                                    className="py-1 px-2 text-xs border border-transparent rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700"
+                                                >
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </li>
+                                ))
+                            ) : (
+                                <li className="py-4 text-gray-500 italic">No faculty records match your search.</li>
+                            )}
+                        </ul>
+                    </div>
+                    {showModal && (
+                        <FacultyFormModal
+                            faculty={currentFaculty}
+                            onClose={() => setShowModal(false)}
+                            onSave={currentFaculty ? handleUpdateFaculty : handleAddFaculty}
+                        />
+                    )}
+                    {showDeleteModal && (
+                        <DeleteConfirmationModal
+                            onClose={() => setShowDeleteModal(false)}
+                            onConfirm={handleDeleteFaculty}
+                            message="Are you sure you want to delete this faculty record? This action cannot be undone."
+                        />
+                    )}
+                </div>
+            );
+        };
+
+        // --- Unified MyCourses Component for both Faculty and Students ---
+        const MyCourses = ({ user }) => {
+            // For students: Display enrolled courses and grades
+            if (user.role === 'student') {
+                const studentData = database.students.find(s => s.email.toLowerCase() === user.email.toLowerCase());
+                if (studentData) {
+                    return (
+                        <div className="p-6 bg-white rounded-lg shadow-md space-y-4">
+                            <h3 className="text-xl font-bold text-gray-800">My Courses</h3>
+                            <div className="space-y-4">
+                                <div>
+                                    <h4 className="text-lg font-semibold text-gray-700">Enrolled Courses</h4>
+                                    <ul className="list-disc list-inside mt-2 text-gray-600">
+                                        {studentData.courses.length > 0 ? (
+                                            studentData.courses.map(courseCode => {
+                                                const course = database.courses.find(c => c.code === courseCode);
+                                                return <li key={courseCode}>{course ? `${course.code} - ${course.name}` : courseCode}</li>;
+                                            })
+                                        ) : (
+                                            <p>No courses enrolled.</p>
+                                        )}
+                                    </ul>
+                                </div>
+                                <GradesView grades={studentData.grades} />
+                                <AttendanceView email={user.email} />
+                            </div>
+                        </div>
+                    );
+                }
+            }
+            
+            // For faculty: Show course management interface
+            if (user.role === 'faculty') {
+                const [activeCourse, setActiveCourse] = useState(null);
+                const [activeTab, setActiveTab] = useState('overview');
+                const [showAddContentModal, setShowAddContentModal] = useState(false);
+                const [newContent, setNewContent] = useState({ title: '', description: '', type: 'lecture', attachments: [] });
+                const [materialsReloadFlag, setMaterialsReloadFlag] = useState(0); // trigger rerender when db changes
+
+                const facultyMember = database.faculty.find(f => f.email === user.email);
+                const facultyCourses = facultyMember ? database.courses.filter(c => 
+                    facultyMember.coursesTaught.includes(c.code)
+                ) : [];
+
+                const getEnrolledStudents = (courseCode) => {
+                    return database.students.filter(student => 
+                        student.courses.includes(courseCode)
+                    );
+                };
+
+                // Read/write to persistent database.courseMaterials
+                const getMaterials = (code) => {
+                    database.courseMaterials = database.courseMaterials || {};
+                    if (!database.courseMaterials[code]) database.courseMaterials[code] = [];
+                    return database.courseMaterials[code];
+                };
+
+                const handleAddContent = async (e) => {
+                    e.preventDefault();
+                    if (!activeCourse) return;
+
+                    const materials = getMaterials(activeCourse.code);
+                    const id = Math.max(0, ...materials.map(m => m.id)) + 1;
+                    const content = {
+                        id,
+                        title: newContent.title,
+                        description: newContent.description,
+                        type: newContent.type,
+                        date: new Date().toISOString().split('T')[0],
+                        attachments: newContent.attachments || []
+                    };
+                    materials.push(content);
+                    // trigger rerender
+                    setMaterialsReloadFlag(f => f + 1);
+                    setShowAddContentModal(false);
+                    setNewContent({ title: '', description: '', type: 'lecture', attachments: [] });
+                };
+
+                // Handle file upload and convert to data URL
+                const handleFileChange = (files) => {
+                    const arr = Array.from(files || []);
+                    const readers = arr.map(file => new Promise((resolve) => {
+                        const r = new FileReader();
+                        r.onload = () => resolve({ name: file.name, dataUrl: r.result });
+                        r.readAsDataURL(file);
+                    }));
+                    return Promise.all(readers);
+                };
+
+                const handleAttachmentSelect = async (e) => {
+                    const uploaded = await handleFileChange(e.target.files);
+                    setNewContent(prev => ({ ...prev, attachments: (prev.attachments || []).concat(uploaded) }));
+                };
+
+                const saveGrade = (studentEmail, courseCode, grade) => {
+                    // update student record
+                    database.students = database.students.map(s => s.email === studentEmail ? { ...s, grades: { ...s.grades, [courseCode]: grade } } : s);
+                    // also update examResults if there is an exam mapping (optional)
+                    // if exam exists for this course, update that student's exam result entry or create one
+                    const examsForCourse = (database.exams || []).filter(ex => ex.courseCode === courseCode);
+                    if (examsForCourse.length > 0) {
+                        const ex = examsForCourse[0];
+                        const existing = (database.examResults || []).find(r => r.examId === ex.id && r.studentEmail === studentEmail);
+                        if (existing) {
+                            existing.grade = grade;
+                        } else {
+                            const nid = Math.max(0, ...(database.examResults || []).map(r=>r.id)) + 1;
+                            database.examResults.push({ id: nid, examId: ex.id, studentEmail, grade });
+                        }
+                    }
+                    // force UI refresh where needed
+                    setMaterialsReloadFlag(f => f + 1);
+                };
+
+                return (
+                    <div className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {facultyCourses.map(course => (
+                                <div 
+                                    key={course.code}
+                                    className={`p-4 rounded-lg border cursor-pointer transition-all ${
+                                        activeCourse?.code === course.code 
+                                        ? 'border-blue-500 bg-blue-50' 
+                                        : 'border-gray-200 hover:border-blue-300'
+                                    }`}
+                                    onClick={() => setActiveCourse(course)}
+                                >
+                                    <h3 className="font-bold text-lg">{course.name}</h3>
+                                    <p className="text-gray-600">Code: {course.code}</p>
+                                    <p className="text-sm text-gray-500">Department: {course.department}</p>
+                                </div>
+                            ))}
+                        </div>
+
+                        {activeCourse && (
+                            <div className="bg-white rounded-lg shadow p-6">
+                                <div className="flex justify-between items-center mb-6">
+                                    <h2 className="text-2xl font-bold">{activeCourse.name}</h2>
+                                    <button
+                                        onClick={() => setShowAddContentModal(true)}
+                                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                                    >
+                                        Add Content
+                                    </button>
+                                </div>
+
+                                <div className="border-b mb-6">
+                                    <nav className="flex space-x-4">
+                                        <button
+                                            onClick={() => setActiveTab('overview')}
+                                            className={`py-2 px-4 ${activeTab === 'overview' ? 'border-b-2 border-blue-500' : ''}`}
+                                        >
+                                            Overview
+                                        </button>
+                                        <button
+                                            onClick={() => setActiveTab('materials')}
+                                            className={`py-2 px-4 ${activeTab === 'materials' ? 'border-b-2 border-blue-500' : ''}`}
+                                        >
+                                            Materials
+                                        </button>
+                                        <button
+                                            onClick={() => setActiveTab('students')}
+                                            className={`py-2 px-4 ${activeTab === 'students' ? 'border-b-2 border-blue-500' : ''}`}
+                                        >
+                                            Students
+                                        </button>
+                                    </nav>
+                                </div>
+
+                                {activeTab === 'overview' && (
+                                    <div className="space-y-4">
+                                        <h3 className="text-xl font-semibold">Course Overview</h3>
+                                        <p>Course Code: {activeCourse.code}</p>
+                                        <p>Department: {activeCourse.department}</p>
+                                        <p>Total Students: {getEnrolledStudents(activeCourse.code).length}</p>
+                                    </div>
+                                )}
+
+                                {activeTab === 'materials' && (
+                                    <div className="space-y-4">
+                                        <h3 className="text-xl font-semibold">Course Materials</h3>
+                                        <div className="grid gap-4">
+                                            {(getMaterials(activeCourse.code) || []).map(material => (
+                                                <div key={material.id} className="border rounded-lg p-4">
+                                                    <div className="flex justify-between items-start">
+                                                        <div>
+                                                            <h4 className="font-semibold">{material.title}</h4>
+                                                            <p className="text-sm text-gray-600">{material.description}</p>
+                                                            <p className="text-sm text-gray-500 mt-2">Type: {material.type.charAt(0).toUpperCase() + material.type.slice(1)}</p>
+                                                            {material.attachments && material.attachments.length > 0 && (
+                                                                <div className="mt-2">
+                                                                    <div className="text-sm font-medium">Attachments:</div>
+                                                                    <ul className="text-sm text-blue-600">
+                                                                        {material.attachments.map((a, i) => (
+                                                                            <li key={i}><a href={a.dataUrl} target="_blank" rel="noreferrer">{a.name}</a></li>
+                                                                        ))}
+                                                                    </ul>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <span className="text-sm text-gray-500">{material.date}</span>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {activeTab === 'students' && (
+                                    <div className="space-y-4">
+                                        <h3 className="text-xl font-semibold">Enrolled Students</h3>
+                                        <div className="overflow-x-auto">
+                                            <table className="min-w-full divide-y divide-gray-200">
+                                                <thead>
+                                                    <tr>
+                                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
+                                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Grade</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody className="bg-white divide-y divide-gray-200">
+                                                    {getEnrolledStudents(activeCourse.code).map(student => (
+                                                        <tr key={student.id}>
+                                                            <td className="px-6 py-4 whitespace-nowrap">{student.name}</td>
+                                                            <td className="px-6 py-4 whitespace-nowrap">{student.email}</td>
+                                                            <td className="px-6 py-4 whitespace-nowrap">{student.department}</td>
+                                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                                <select defaultValue={student.grades[activeCourse.code] || ''} onChange={(e) => saveGrade(student.email, activeCourse.code, e.target.value)} className="px-2 py-1 border rounded">
+                                                                    <option value="">--</option>
+                                                                    <option value="A+">A+</option>
+                                                                    <option value="A">A</option>
+                                                                    <option value="B+">B+</option>
+                                                                    <option value="B">B</option>
+                                                                    <option value="C">C</option>
+                                                                    <option value="D">D</option>
+                                                                    <option value="F">F</option>
+                                                                </select>
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {showAddContentModal && (
+                            <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+                                <div className="bg-white rounded-lg p-6 w-full max-w-md">
+                                    <h3 className="text-xl font-bold mb-4">Add Course Content</h3>
+                                    <form onSubmit={handleAddContent} className="space-y-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700">Title</label>
+                                            <input
+                                                type="text"
+                                                value={newContent.title}
+                                                onChange={e => setNewContent({...newContent, title: e.target.value})}
+                                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                                required
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700">Type</label>
+                                            <select
+                                                value={newContent.type}
+                                                onChange={e => setNewContent({...newContent, type: e.target.value})}
+                                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                            >
+                                                <option value="lecture">Lecture</option>
+                                                <option value="practical">Practical</option>
+                                                <option value="assignment">Assignment</option>
+                                                <option value="quiz">Quiz</option>
+                                                <option value="project">Project</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700">Description</label>
+                                            <textarea
+                                                value={newContent.description}
+                                                onChange={e => setNewContent({...newContent, description: e.target.value})}
+                                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                                rows="3"
+                                                required
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700">Attachments (optional)</label>
+                                            <input type="file" multiple onChange={handleAttachmentSelect} className="mt-1" />
+                                            {newContent.attachments && newContent.attachments.length > 0 && (
+                                                <ul className="text-sm mt-2">
+                                                    {newContent.attachments.map((a,i) => <li key={i}>{a.name}</li>)}
+                                                </ul>
+                                            )}
+                                        </div>
+                                        <div className="flex justify-end space-x-3">
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowAddContentModal(false)}
+                                                className="px-4 py-2 border rounded-md text-gray-600 hover:bg-gray-50"
+                                            >
+                                                Cancel
+                                            </button>
+                                            <button
+                                                type="submit"
+                                                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                                            >
+                                                Add Content
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                );
+            }
+
+            // For other roles
+            return <p className="p-4 text-gray-600">My Courses is not available for this role.</p>;
+        };
+
+        const MyProfile = ({ user }) => (
+            <div className="p-6 bg-white rounded-lg shadow-md space-y-4">
+                <h3 className="text-xl font-bold text-gray-800">My Profile</h3>
+                <div className="space-y-2 text-gray-700">
+                    <p><strong>Name:</strong> {user.name}</p>
+                    <p><strong>Email:</strong> {user.email}</p>
+                    <p><strong>Role:</strong> {user.role}</p>
+                </div>
+            </div>
+        );
+
+        // --- Accountant and Librarian Components ---
+        const AccountantDashboard = () => (
+            <div className="p-6 bg-white rounded-lg shadow-md space-y-4">
+                <h3 className="text-xl font-bold text-gray-800">Accountant Dashboard</h3>
+                <div className="bg-purple-50 border-l-4 border-purple-500 text-purple-700 p-4 rounded-md">
+                    <h4 className="font-bold">Features Coming Soon</h4>
+                    <p className="text-sm">This section would contain features for fee management, payments, and financial reports.</p>
+                </div>
+            </div>
+        );
+
+        const LibrarianDashboard = () => (
+            <div className="p-6 bg-white rounded-lg shadow-md space-y-4">
+                <h3 className="text-xl font-bold text-gray-800">Librarian Dashboard</h3>
+                <div className="bg-teal-50 border-l-4 border-teal-500 text-teal-700 p-4 rounded-md">
+                    <h4 className="font-bold">Features Coming Soon</h4>
+                    <p className="text-sm">This section would contain features for library management and resource tracking.</p>
+                </div>
+            </div>
+        );
+
+        // --- Offers Module ---
+        const Offers = ({ user }) => {
+            const [offers, setOffers] = useState(database.offers || []);
+            const [showForm, setShowForm] = useState(false);
+            const [form, setForm] = useState({ title: '', description: '', active: true });
+
+            const handleCreate = () => {
+                const id = Math.max(0, ...offers.map(o => o.id)) + 1;
+                const newOffer = { id, ...form, createdBy: user.email };
+                database.offers.push(newOffer);
+                setOffers([...database.offers]);
+                setShowForm(false);
+            };
+
+            const toggleActive = (id) => {
+                database.offers = database.offers.map(o => o.id === id ? { ...o, active: !o.active } : o);
+                setOffers([...database.offers]);
+            };
+
+            return (
+                <div className="p-6 bg-white rounded-lg shadow-md space-y-4">
+                    <h3 className="text-xl font-bold text-gray-800">Offers</h3>
+                    {user.role === 'admin' && (
+                        <div className="space-y-2">
+                            <button onClick={() => setShowForm(true)} className="py-2 px-4 bg-green-600 text-white rounded">Create Offer</button>
+                        </div>
+                    )}
+                    <ul className="divide-y divide-gray-200 mt-4">
+                        {offers.map(o => (
+                            <li key={o.id} className="py-3 flex justify-between items-start">
+                                <div>
+                                    <div className="font-medium text-gray-800">{o.title} {o.active ? <span className="text-sm text-green-600">(Active)</span> : <span className="text-sm text-gray-500">(Inactive)</span>}</div>
+                                    <div className="text-sm text-gray-600">{o.description}</div>
+                                </div>
+                                {user.role === 'admin' && (
+                                    <div className="flex flex-col space-y-2">
+                                        <button onClick={() => toggleActive(o.id)} className="py-1 px-2 bg-indigo-600 text-white rounded text-sm">Toggle</button>
+                                    </div>
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+                    {showForm && (
+                        <div className="mt-4 border-t pt-4">
+                            <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} placeholder="Title" className="w-full mb-2 px-2 py-1 border rounded" />
+                            <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Description" className="w-full mb-2 px-2 py-1 border rounded"></textarea>
+                            <div className="flex space-x-2">
+                                <button onClick={handleCreate} className="py-2 px-4 bg-green-600 text-white rounded">Save</button>
+                                <button onClick={() => setShowForm(false)} className="py-2 px-4 bg-gray-200 rounded">Cancel</button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // --- Financial Record Module ---
+        const FinancialRecord = ({ user }) => {
+            const [records, setRecords] = useState(database.financialRecords || []);
+            const [message, setMessage] = useState('');
+
+            const createRecord = (rec) => {
+                if (!(user.role === 'accountant' || user.role === 'admin')) return;
+                const id = Math.max(0, ...records.map(r => r.id)) + 1;
+                const newRec = { id, ...rec };
+                database.financialRecords.push(newRec);
+                setRecords([...database.financialRecords]);
+                setMessage('Record created');
+                setTimeout(() => setMessage(''), 2500);
+            };
+
+            return (
+                <div className="p-6 bg-white rounded-lg shadow-md space-y-4">
+                    <h3 className="text-xl font-bold text-gray-800">Financial Records</h3>
+                    {message && <div className="text-sm text-green-700">{message}</div>}
+                    <ul className="divide-y divide-gray-200">
+                        {records.map(r => (
+                            <li key={r.id} className="py-2 flex justify-between">
+                                <div>
+                                    <div className="font-medium">{r.studentEmail} — {r.term}</div>
+                                    <div className="text-sm text-gray-600">Due: ${r.amountDue} Paid: ${r.amountPaid} — {r.status}</div>
+                                </div>
+                                {(user.role === 'accountant' || user.role === 'admin') && (
+                                    <div className="flex space-x-2">
+                                        <button onClick={() => { const updated = records.map(x => x.id === r.id ? { ...x, amountPaid: x.amountPaid + 100 } : x); database.financialRecords = updated; setRecords([...updated]); }} className="py-1 px-2 bg-indigo-600 text-white rounded text-sm">Record Payment +$100</button>
+                                    </div>
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+                    {(user.role === 'accountant' || user.role === 'admin') && (
+                        <div className="mt-4">
+                            <h4 className="font-semibold">Create Financial Record</h4>
+                            <form onSubmit={e => { e.preventDefault(); const data = { studentEmail: e.target.email.value, term: e.target.term.value, amountDue: Number(e.target.due.value), amountPaid: Number(e.target.paid.value), status: 'partial' }; createRecord(data); e.target.reset(); }} className="space-y-2">
+                                <input name="email" placeholder="Student email" className="w-full px-2 py-1 border rounded" required />
+                                <input name="term" placeholder="Term" className="w-full px-2 py-1 border rounded" required />
+                                <input name="due" placeholder="Amount Due" type="number" className="w-full px-2 py-1 border rounded" required />
+                                <input name="paid" placeholder="Amount Paid" type="number" className="w-full px-2 py-1 border rounded" defaultValue={0} />
+                                <button type="submit" className="py-2 px-4 bg-green-600 text-white rounded">Create</button>
+                            </form>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // --- Raise Infra Issue Module ---
+        const RaiseInfraIssue = ({ user }) => {
+            const [issues, setIssues] = useState(database.infraIssues || []);
+            const [form, setForm] = useState({ subject: '', description: '' });
+
+            const raise = () => {
+                const id = Math.max(0, ...issues.map(i => i.id)) + 1;
+                const newIssue = { id, raisedBy: user.email, subject: form.subject, description: form.description, status: 'open', assignedTo: null, date: new Date().toISOString().slice(0,10) };
+                database.infraIssues.push(newIssue);
+                setIssues([...database.infraIssues]);
+                setForm({ subject: '', description: '' });
+            };
+
+            const assign = (id, assignee) => {
+                database.infraIssues = database.infraIssues.map(i => i.id === id ? { ...i, assignedTo: assignee, status: 'assigned' } : i);
+                setIssues([...database.infraIssues]);
+            };
+
+            return (
+                <div className="p-6 bg-white rounded-lg shadow-md space-y-4">
+                    <h3 className="text-xl font-bold text-gray-800">Raise Infra Issue</h3>
+                    <div className="space-y-2">
+                        <h4 className="font-semibold">Raise New Issue</h4>
+                        <input value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })} placeholder="Subject" className="w-full px-2 py-1 border rounded" />
+                        <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Description" className="w-full px-2 py-1 border rounded" />
+                        <div className="flex space-x-2">
+                            <button onClick={raise} className="py-2 px-4 bg-green-600 text-white rounded">Submit</button>
+                        </div>
+                    </div>
+                    <ul className="divide-y divide-gray-200 mt-4">
+                        {issues.map(i => (
+                            <li key={i.id} className="py-2 flex justify-between items-start">
+                                <div>
+                                    <div className="font-medium">{i.subject} <span className="text-sm text-gray-500">by {i.raisedBy}</span></div>
+                                    <div className="text-sm text-gray-600">{i.description}</div>
+                                    <div className="text-xs text-gray-500">Status: {i.status} {i.assignedTo ? `— Assigned to ${i.assignedTo}` : ''}</div>
+                                </div>
+                                {(user.role === 'admin' || user.role === 'faculty') && (
+                                    <div className="flex flex-col space-y-2">
+                                        <select onChange={e => assign(i.id, e.target.value)} className="px-2 py-1 border rounded">
+                                            <option value="">Assign to...</option>
+                                            {database.users.filter(u => u.role === 'faculty').map(f => <option key={f.email} value={f.email}>{f.name}</option>)}
+                                        </select>
+                                    </div>
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        };
+
+        // --- Disciplinary Module ---
+        const Disciplinary = ({ user }) => {
+            const [records, setRecords] = useState(database.disciplinary || []);
+            const [form, setForm] = useState({ studentEmail: '', issue: '' });
+
+            const createRecord = () => {
+                if (!(user.role === 'admin' || user.role === 'faculty')) return;
+                const id = Math.max(0, ...records.map(r => r.id)) + 1;
+                const rec = { id, studentEmail: form.studentEmail, issue: form.issue, status: 'reported', actions: [] };
+                database.disciplinary.push(rec);
+                setRecords([...database.disciplinary]);
+                setForm({ studentEmail: '', issue: '' });
+            };
+
+            const addAction = (id, action) => {
+                database.disciplinary = database.disciplinary.map(r => r.id === id ? { ...r, actions: [...r.actions, action], status: 'actioned' } : r);
+                setRecords([...database.disciplinary]);
+            };
+
+            return (
+                <div className="p-6 bg-white rounded-lg shadow-md space-y-4">
+                    <h3 className="text-xl font-bold text-gray-800">Disciplinary</h3>
+                    {(user.role === 'admin' || user.role === 'faculty') && (
+                        <div className="space-y-2">
+                            <h4 className="font-semibold">Report / Manage</h4>
+                            <input value={form.studentEmail} onChange={e => setForm({ ...form, studentEmail: e.target.value })} placeholder="Student Email" className="w-full px-2 py-1 border rounded" />
+                            <input value={form.issue} onChange={e => setForm({ ...form, issue: e.target.value })} placeholder="Issue" className="w-full px-2 py-1 border rounded" />
+                            <div className="flex space-x-2">
+                                <button onClick={createRecord} className="py-2 px-4 bg-green-600 text-white rounded">Create</button>
+                            </div>
+                        </div>
+                    )}
+                    <ul className="divide-y divide-gray-200">
+                        {records.map(r => (
+                            <li key={r.id} className="py-3">
+                                <div className="flex justify-between">
+                                    <div>
+                                        <div className="font-medium">{r.studentEmail} — {r.issue}</div>
+                                        <div className="text-sm text-gray-600">Status: {r.status}</div>
+                                        <div className="text-sm text-gray-500">Actions: {r.actions.join(', ') || 'None'}</div>
+                                    </div>
+                                    {(user.role === 'admin' || user.role === 'faculty') && (
+                                        <div className="flex flex-col space-y-2">
+                                            <button onClick={() => addAction(r.id, 'Warning issued')} className="py-1 px-2 bg-indigo-600 text-white rounded text-sm">Add Warning</button>
+                                        </div>
+                                    )}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        };
+
+        // --- Grades View Component ---
+        const GradesView = ({ grades }) => (
+            <div>
+                <h3 className="text-xl font-semibold text-gray-700">My Grades</h3>
+                <ul className="divide-y divide-gray-200 mt-2">
+                    {Object.keys(grades).length > 0 ? (
+                        Object.keys(grades).map(course => (
+                            <li key={course} className="py-2 flex justify-between">
+                                <span className="font-medium text-gray-800">{course}</span>
+                                <span className="font-bold text-indigo-600">{grades[course]}</span>
+                            </li>
+                        ))
+                    ) : (
+                        <li className="py-2 text-gray-500 italic">No grades have been entered yet.</li>
+                    )}
+                </ul>
+            </div>
+        );
+
+        // --- Attendance View Component ---
+        const AttendanceView = ({ email }) => {
+            const studentAttendance = database.attendance[email];
+            if (!studentAttendance) {
+                return <p className="text-gray-500 italic">Attendance record not found.</p>;
+            }
+            return (
+                <div>
+                    <h3 className="text-xl font-semibold text-gray-700">My Attendance</h3>
+                    <ul className="divide-y divide-gray-200 mt-2">
+                        {Object.keys(studentAttendance).map(course => (
+                            <li key={course} className="py-2 flex justify-between">
+                                <span className="font-medium text-gray-800">{course}</span>
+                                <span className="text-sm text-gray-600">{studentAttendance[course].attended} / {studentAttendance[course].total} classes</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        };
+
+        // --- Modals for Forms and Deletion ---
+        const StudentFormModal = ({ student, onClose, onSave }) => {
+            const [name, setName] = useState(student ? student.name : '');
+            const [email, setEmail] = useState(student ? student.email : '');
+            const [department, setDepartment] = useState(student ? student.department : '');
+            const [courses, setCourses] = useState(student ? student.courses.join(', ') : '');
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                const updatedStudent = {
+                    id: student ? student.id : null,
+                    name,
+                    email,
+                    department,
+                    courses: courses.split(',').map(c => c.trim()).filter(c => c),
+                };
+                onSave(updatedStudent);
+            };
+
+            return (
+                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
+                    <div className="relative bg-white rounded-lg p-8 shadow-xl w-full max-w-sm">
+                        <h2 className="text-2xl font-bold mb-4">{student ? 'Edit Student' : 'Add Student'}</h2>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Name</label>
+                                <input
+                                    type="text"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Email</label>
+                                <input
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Department</label>
+                                <input
+                                    type="text"
+                                    value={department}
+                                    onChange={(e) => setDepartment(e.target.value)}
+                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Courses (comma separated)</label>
+                                <input
+                                    type="text"
+                                    value={courses}
+                                    onChange={(e) => setCourses(e.target.value)}
+                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                                />
+                            </div>
+                            <div className="flex justify-end space-x-2">
+                                <button
+                                    type="button"
+                                    onClick={onClose}
+                                    className="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+                                >
+                                    Save
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            );
+        };
+
+        const FacultyFormModal = ({ faculty, onClose, onSave }) => {
+            const [name, setName] = useState(faculty ? faculty.name : '');
+            const [email, setEmail] = useState(faculty ? faculty.email : '');
+            const [department, setDepartment] = useState(faculty ? faculty.department : '');
+            const [coursesTaught, setCoursesTaught] = useState(faculty ? faculty.coursesTaught.join(', ') : '');
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                const updatedFaculty = {
+                    id: faculty ? faculty.id : null,
+                    name,
+                    email,
+                    department,
+                    coursesTaught: coursesTaught.split(',').map(c => c.trim()).filter(c => c),
+                };
+                onSave(updatedFaculty);
+            };
+
+            return (
+                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
+                    <div className="relative bg-white rounded-lg p-8 shadow-xl w-full max-w-sm">
+                        <h2 className="text-2xl font-bold mb-4">{faculty ? 'Edit Faculty' : 'Add Faculty'}</h2>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Name</label>
+                                <input
+                                    type="text"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Email</label>
+                                <input
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Department</label>
+                                <input
+                                    type="text"
+                                    value={department}
+                                    onChange={(e) => setDepartment(e.target.value)}
+                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Courses Taught (comma separated)</label>
+                                <input
+                                    type="text"
+                                    value={coursesTaught}
+                                    onChange={(e) => setCoursesTaught(e.target.value)}
+                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                                />
+                            </div>
+                            <div className="flex justify-end space-x-2">
+                                <button
+                                    type="button"
+                                    onClick={onClose}
+                                    className="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+                                >
+                                    Save
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            );
+        };
+
+        const DeleteConfirmationModal = ({ onClose, onConfirm, message }) => {
+            return (
+                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
+                    <div className="relative bg-white rounded-lg p-8 shadow-xl w-full max-w-sm text-center">
+                        <h2 className="text-xl font-bold mb-4">Confirm Deletion</h2>
+                        <p className="text-gray-700 mb-6">{message}</p>
+                        <div className="flex justify-center space-x-4">
+                            <button
+                                onClick={onClose}
+                                className="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={onConfirm}
+                                className="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- Enrollment Component ---
+        const Enrollment = ({ user }) => {
+            const [students, setStudents] = useState(database.students);
+            const [courses, setCourses] = useState(database.courses);
+            const [selectedStudentId, setSelectedStudentId] = useState('');
+            const [selectedCourses, setSelectedCourses] = useState([]);
+            const [message, setMessage] = useState('');
+
+            useEffect(() => {
+                if (user.role === 'student') {
+                    const student = database.students.find(s => s.email === user.email);
+                    if (student) {
+                        setSelectedStudentId(student.id);
+                        setSelectedCourses(student.courses || []);
+                    }
+                }
+            }, [user]);
+
+            const handleCourseToggle = (courseCode) => {
+                setSelectedCourses(prev => {
+                    if (prev.includes(courseCode)) {
+                        return prev.filter(c => c !== courseCode);
+                    } else {
+                        return [...prev, courseCode];
+                    }
+                });
+            };
+
+            const handleSaveEnrollment = () => {
+                if (!selectedStudentId) {
+                    setMessage('Please select a student first.');
+                    return;
+                }
+
+                database.students = database.students.map(s =>
+                    s.id === selectedStudentId
+                        ? { ...s, courses: selectedCourses }
+                        : s
+                );
+
+                setMessage('Enrollment updated successfully!');
+                setTimeout(() => setMessage(''), 3000);
+            };
+
+            return (
+                <div className="p-6 bg-white rounded-lg shadow-md space-y-4">
+                    <h3 className="text-xl font-bold text-gray-800">Course Enrollment</h3>
+
+                    {user.role === 'admin' && (
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Select Student</label>
+                            <select
+                                value={selectedStudentId}
+                                onChange={(e) => {
+                                    const id = parseInt(e.target.value);
+                                    setSelectedStudentId(id);
+                                    const student = database.students.find(s => s.id === id);
+                                    setSelectedCourses(student ? student.courses : []);
+                                }}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                            >
+                                <option value="">-- Choose a Student --</option>
+                                {students.map(s => (
+                                    <option key={s.id} value={s.id}>
+                                        {s.name} ({s.email})
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Available Courses</label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-96 overflow-y-auto border border-gray-300 p-4 rounded-md">
+                            {courses.map(course => (
+                                <label key={course.code} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded">
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedCourses.includes(course.code)}
+                                        onChange={() => handleCourseToggle(course.code)}
+                                        disabled={!selectedStudentId && user.role === 'admin'}
+                                        className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                                    />
+                                    <div className="flex flex-col">
+                                        <span className="font-medium">{course.code}</span>
+                                        <span className="text-sm text-gray-500">{course.name}</span>
+                                    </div>
+                                </label>
+                            ))}
+                        </div>
+                    </div>
+
+                    {message && (
+                        <div className={`p-3 rounded-md ${message.includes('success') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                            {message}
+                        </div>
+                    )}
+
+                    <button
+                        onClick={handleSaveEnrollment}
+                        disabled={(!selectedStudentId && user.role === 'admin') || selectedCourses.length === 0}
+                        className="w-full mt-4 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Save Enrollment
+                    </button>
+                </div>
+            );
+        };
+
+        // --- Enhanced Attendance Module with CRUD ---
+        const Attendance = ({ user }) => {
+            const [attendanceData, setAttendanceData] = useState(database.attendance);
+            const [editState, setEditState] = useState({}); // { email: { course: { attended, total } } }
+
+            // Helper to update attendance in local state and database
+            const updateAttendance = (email, course, attended, total) => {
+                // Enforce client-side role check: only faculty or admin should update
+                if (!user || (user.role !== 'faculty' && user.role !== 'admin')) {
+                    console.warn('Blocked attendance update: insufficient privileges for role', user && user.role);
+                    return;
+                }
+                setAttendanceData(prev => {
+                    const updated = { ...prev };
+                    if (!updated[email]) updated[email] = {};
+                    updated[email][course] = { attended, total };
+                    database.attendance = updated; // update global
+                    return updated;
+                });
+                setEditState({});
+            };
+
+            // Helper to delete attendance record
+            const deleteAttendance = (email, course) => {
+                // Enforce client-side role check: only faculty or admin should delete
+                if (!user || (user.role !== 'faculty' && user.role !== 'admin')) {
+                    console.warn('Blocked attendance delete: insufficient privileges for role', user && user.role);
+                    return;
+                }
+                setAttendanceData(prev => {
+                    const updated = { ...prev };
+                    if (updated[email]) {
+                        delete updated[email][course];
+                        if (Object.keys(updated[email]).length === 0) delete updated[email];
+                    }
+                    database.attendance = updated;
+                    return updated;
+                });
+                setEditState({});
+            };
+
+            // Helper to start editing
+            const startEdit = (email, course, attended, total) => {
+                setEditState({ email, course, attended, total });
+            };
+
+            // Helper to add new attendance
+            const addAttendance = (email, course, attended, total) => {
+                // Enforce client-side role check: only faculty or admin should add
+                if (!user || (user.role !== 'faculty' && user.role !== 'admin')) {
+                    console.warn('Blocked attendance add: insufficient privileges for role', user && user.role);
+                    return;
+                }
+                updateAttendance(email, course, attended, total);
+            };
+
+            // Student view (read-only) - students can only view their attendance
+            if (user.role === 'student') {
+                const studentAttendance = attendanceData[user.email] || {};
+                const courseList = database.students.find(s => s.email === user.email)?.courses || [];
+                return (
+                    <div className="p-6 bg-white rounded-lg shadow-md space-y-4">
+                        <h3 className="text-xl font-bold text-gray-800">My Attendance (View Only)</h3>
+                        <p className="text-sm text-gray-500">You can view your attendance here. Only faculty or admin can add or modify attendance records.</p>
+                        <ul className="divide-y divide-gray-200 mt-2">
+                            {courseList.map(course => (
+                                <li key={course} className="py-2 flex justify-between items-center">
+                                    <span className="font-medium text-gray-800">{course}</span>
+                                    <span className="text-sm text-gray-600">{(studentAttendance[course] && studentAttendance[course].attended) || 0} / {(studentAttendance[course] && studentAttendance[course].total) || 0} classes</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                );
+            }
+            // Faculty view and edit attendance for their courses
+            if (user.role === 'faculty') {
+                const facultyData = database.faculty.find(f => f.email.toLowerCase() === user.email.toLowerCase());
+                const coursesTaught = facultyData ? facultyData.coursesTaught : [];
+                return (
+                    <div className="p-6 bg-white rounded-lg shadow-md space-y-4">
+                        <h3 className="text-xl font-bold text-gray-800">Course Attendance (Edit & Add)</h3>
+                        {coursesTaught.length > 0 ? (
+                            coursesTaught.map(courseCode => (
+                                <div key={courseCode} className="mb-4">
+                                    <h4 className="text-lg font-semibold text-gray-700">{courseCode}</h4>
+                                    <ul className="divide-y divide-gray-200 mt-2">
+                                        {database.students.filter(s => s.courses.includes(courseCode)).map(student => {
+                                            const att = attendanceData[student.email]?.[courseCode];
+                                            return (
+                                                <li key={student.email} className="py-2 flex justify-between items-center">
+                                                    <span className="font-medium text-gray-800">{student.name} ({student.email})</span>
+                                                    {editState.email === student.email && editState.course === courseCode ? (
+                                                        <span>
+                                                            <input type="number" min="0" value={editState.attended} onChange={e => setEditState({ ...editState, attended: Number(e.target.value) })} className="w-16 border rounded px-1" /> / 
+                                                            <input type="number" min="0" value={editState.total} onChange={e => setEditState({ ...editState, total: Number(e.target.value) })} className="w-16 border rounded px-1" />
+                                                            <button className="ml-2 px-2 py-1 bg-green-500 text-white rounded" onClick={() => updateAttendance(student.email, courseCode, editState.attended, editState.total)}>Save</button>
+                                                            <button className="ml-2 px-2 py-1 bg-gray-300 rounded" onClick={() => setEditState({})}>Cancel</button>
+                                                        </span>
+                                                    ) : (
+                                                        <span>
+                                                            {att ? `${att.attended} / ${att.total}` : 'No record'}
+                                                            <button className="ml-2 px-2 py-1 bg-blue-500 text-white rounded" onClick={() => startEdit(student.email, courseCode, att?.attended || 0, att?.total || 0)}>Edit</button>
+                                                            {att && <button className="ml-2 px-2 py-1 bg-red-500 text-white rounded" onClick={() => deleteAttendance(student.email, courseCode)}>Delete</button>}
+                                                        </span>
+                                                    )}
+                                                </li>
+                                            );
+                                        })}
+                                    </ul>
+                                    {/* Add new attendance record for students in this course */}
+                                    <div className="mt-2">
+                                        <form onSubmit={e => {
+                                            e.preventDefault();
+                                            const email = e.target.email.value;
+                                            const attended = Number(e.target.attended.value);
+                                            const total = Number(e.target.total.value);
+                                            addAttendance(email, courseCode, attended, total);
+                                            e.target.reset();
+                                        }} className="flex space-x-2">
+                                            <select name="email" className="border rounded px-2">
+                                                {database.students.filter(s => s.courses.includes(courseCode)).map(student => (
+                                                    <option key={student.email} value={student.email}>{student.name} ({student.email})</option>
+                                                ))}
+                                            </select>
+                                            <input name="attended" type="number" min="0" placeholder="Attended" className="w-16 border rounded px-1" required />
+                                            <input name="total" type="number" min="0" placeholder="Total" className="w-16 border rounded px-1" required />
+                                            <button type="submit" className="px-2 py-1 bg-green-600 text-white rounded">Add</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <p className="text-gray-500 italic">You are not assigned to any courses.</p>
+                        )}
+                    </div>
+                );
+            }
+            // Admin view and edit all attendance
+            if (user.role === 'admin') {
+                return (
+                    <div className="p-6 bg-white rounded-lg shadow-md space-y-4">
+                        <h3 className="text-xl font-bold text-gray-800">All Students Attendance (Edit & Add)</h3>
+                        {database.students.map(student => (
+                            <div key={student.id} className="mb-4">
+                                <h4 className="text-lg font-semibold text-gray-700">{student.name} ({student.email})</h4>
+                                <ul className="divide-y divide-gray-200 mt-2">
+                                    {student.courses.map(course => {
+                                        const att = attendanceData[student.email]?.[course];
+                                        return (
+                                            <li key={course} className="py-2 flex justify-between items-center">
+                                                <span className="font-medium text-gray-800">{course}</span>
+                                                {editState.email === student.email && editState.course === course ? (
+                                                    <span>
+                                                        <input type="number" min="0" value={editState.attended} onChange={e => setEditState({ ...editState, attended: Number(e.target.value) })} className="w-16 border rounded px-1" /> / 
+                                                        <input type="number" min="0" value={editState.total} onChange={e => setEditState({ ...editState, total: Number(e.target.value) })} className="w-16 border rounded px-1" />
+                                                        <button className="ml-2 px-2 py-1 bg-green-500 text-white rounded" onClick={() => updateAttendance(student.email, course, editState.attended, editState.total)}>Save</button>
+                                                        <button className="ml-2 px-2 py-1 bg-gray-300 rounded" onClick={() => setEditState({})}>Cancel</button>
+                                                    </span>
+                                                ) : (
+                                                    <span>
+                                                        {att ? `${att.attended} / ${att.total}` : 'No record'}
+                                                        <button className="ml-2 px-2 py-1 bg-blue-500 text-white rounded" onClick={() => startEdit(student.email, course, att?.attended || 0, att?.total || 0)}>Edit</button>
+                                                        {att && <button className="ml-2 px-2 py-1 bg-red-500 text-white rounded" onClick={() => deleteAttendance(student.email, course)}>Delete</button>}
+                                                    </span>
+                                                )}
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
+                                {/* Add new attendance record for this student */}
+                                <div className="mt-2">
+                                    <form onSubmit={e => {
+                                        e.preventDefault();
+                                        const course = e.target.course.value;
+                                        const attended = Number(e.target.attended.value);
+                                        const total = Number(e.target.total.value);
+                                        addAttendance(student.email, course, attended, total);
+                                        e.target.reset();
+                                    }} className="flex space-x-2">
+                                        <select name="course" className="border rounded px-2">
+                                            {student.courses.map(course => (
+                                                <option key={course} value={course}>{course}</option>
+                                            ))}
+                                        </select>
+                                        <input name="attended" type="number" min="0" placeholder="Attended" className="w-16 border rounded px-1" required />
+                                        <input name="total" type="number" min="0" placeholder="Total" className="w-16 border rounded px-1" required />
+                                        <button type="submit" className="px-2 py-1 bg-green-600 text-white rounded">Add</button>
+                                    </form>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                );
+            }
+            // Other roles
+            return <p className="p-4 text-gray-600">Attendance module is not available for this role.</p>;
+        };
+
+        // --- Exams & Results Module (expanded) ---
+        const ExamsResults = ({ user }) => {
+            const [exams, setExams] = useState(database.exams || []);
+            const [results, setResults] = useState(database.examResults || []);
+            const [hallTickets, setHallTickets] = useState(database.hallTickets || []);
+            const [form, setForm] = useState({ courseCode: '', title: '', date: '', description: '' });
+            const [message, setMessage] = useState('');
+
+            useEffect(() => {
+                setExams(database.exams || []);
+                setResults(database.examResults || []);
+                setHallTickets(database.hallTickets || []);
+            }, []);
+
+            const createExam = () => {
+                if (user.role !== 'faculty' && user.role !== 'admin') return;
+                const id = Math.max(0, ...exams.map(e => e.id)) + 1;
+                const exam = { id, ...form, createdBy: user.email };
+                database.exams.push(exam);
+                setExams([...database.exams]);
+                setForm({ courseCode: '', title: '', date: '', description: '' });
+                setMessage('Exam created');
+                setTimeout(() => setMessage(''), 2000);
+            };
+
+            const addResult = (examId, studentEmail, grade) => {
+                if (user.role !== 'faculty' && user.role !== 'admin') return;
+                const id = Math.max(0, ...results.map(r => r.id)) + 1;
+                const rec = { id, examId, studentEmail, grade };
+                database.examResults.push(rec);
+                setResults([...database.examResults]);
+            };
+
+            const uploadHallTicket = (examId, file) => {
+                if (user.role !== 'faculty' && user.role !== 'admin') return;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const dataUrl = e.target.result;
+                    const id = Math.max(0, ...hallTickets.map(h => h.id)) + 1;
+                    const rec = { id, examId, studentEmail: null, fileName: file.name, fileDataUrl: dataUrl, createdBy: user.email };
+                    database.hallTickets.push(rec);
+                    setHallTickets([...database.hallTickets]);
+                };
+                reader.readAsDataURL(file);
+            };
+
+            const uploadHallTicketForStudent = (examId, studentEmail, file) => {
+                if (user.role !== 'faculty' && user.role !== 'admin') return;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const dataUrl = e.target.result;
+                    const id = Math.max(0, ...hallTickets.map(h => h.id)) + 1;
+                    const rec = { id, examId, studentEmail, fileName: file.name, fileDataUrl: dataUrl, createdBy: user.email };
+                    database.hallTickets.push(rec);
+                    setHallTickets([...database.hallTickets]);
+                };
+                reader.readAsDataURL(file);
+            };
+
+            const downloadDataUrl = (fileDataUrl, fileName) => {
+                const a = document.createElement('a');
+                a.href = fileDataUrl;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            };
+
+            // Faculty view: create exams, add results, upload hall tickets
+            if (user.role === 'faculty') {
+                const facultyData = database.faculty.find(f => f.email === user.email);
+                const coursesTaught = facultyData ? facultyData.coursesTaught : [];
+                return (
+                    <div className="p-6 bg-white rounded-lg shadow-md space-y-4">
+                        <h3 className="text-xl font-bold text-gray-800">Exams & Results (Faculty)</h3>
+                        {message && <div className="text-sm text-green-700">{message}</div>}
+
+                        <div className="border p-4 rounded">
+                            <h4 className="font-semibold">Create Exam</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                                <select value={form.courseCode} onChange={e => setForm({ ...form, courseCode: e.target.value })} className="border rounded px-2 py-1">
+                                    <option value="">Select course</option>
+                                    {coursesTaught.map(c => <option key={c} value={c}>{c}</option>)}
+                                </select>
+                                <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} placeholder="Title" className="border rounded px-2 py-1" />
+                                <input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} className="border rounded px-2 py-1" />
+                            </div>
+                            <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Description" className="w-full mt-2 border rounded px-2 py-1" />
+                            <div className="mt-2">
+                                <button onClick={createExam} className="py-2 px-4 bg-green-600 text-white rounded">Create Exam</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 className="font-semibold">Manage Exams</h4>
+                            {exams.length === 0 && <p className="text-sm text-gray-500">No exams created yet.</p>}
+                            {exams.map(exam => (
+                                <div key={exam.id} className="border rounded p-3 mb-2">
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <div className="font-medium">{exam.title} — {exam.courseCode} <span className="text-sm text-gray-500">({exam.date})</span></div>
+                                            <div className="text-sm text-gray-600">{exam.description}</div>
+                                        </div>
+                                        <div className="flex flex-col space-y-2">
+                                            <label className="text-xs text-gray-500">Upload hall ticket (for all)</label>
+                                            <input type="file" onChange={e => e.target.files[0] && uploadHallTicket(exam.id, e.target.files[0])} />
+                                        </div>
+                                    </div>
+                                    <div className="mt-2">
+                                        <h5 className="font-semibold">Results</h5>
+                                        <ul className="divide-y divide-gray-200">
+                                            {database.students.filter(s => s.courses.includes(exam.courseCode)).map(student => {
+                                                const res = results.find(r => r.examId === exam.id && r.studentEmail === student.email);
+                                                return (
+                                                    <li key={student.email} className="py-2 flex justify-between items-center">
+                                                        <div>{student.name} ({student.email}) — <span className="font-medium">{res ? res.grade : 'No grade'}</span></div>
+                                                        <div className="flex items-center space-x-2">
+                                                            <form onSubmit={e => { e.preventDefault(); addResult(exam.id, e.target.email.value, e.target.grade.value); e.target.reset(); }} className="flex items-center space-x-2">
+                                                                <input name="email" defaultValue={student.email} readOnly className="hidden" />
+                                                                <input name="grade" placeholder="Grade" className="w-20 border rounded px-1" />
+                                                                <button type="submit" className="py-1 px-2 bg-green-600 text-white rounded text-sm">Save</button>
+                                                            </form>
+                                                            <label className="text-xs">Upload hall ticket</label>
+                                                            <input type="file" onChange={e => e.target.files[0] && uploadHallTicketForStudent(exam.id, student.email, e.target.files[0])} />
+                                                        </div>
+                                                    </li>
+                                                );
+                                            })}
+                                        </ul>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            }
+
+            // Student view: list exams for the student's courses, show results and hall tickets
+            if (user.role === 'student') {
+                const student = database.students.find(s => s.email.toLowerCase() === user.email.toLowerCase());
+                const studentExams = exams.filter(ex => student && student.courses.includes(ex.courseCode));
+                return (
+                    <div className="p-6 bg-white rounded-lg shadow-md space-y-4">
+                        <h3 className="text-xl font-bold text-gray-800">Exams & Results (Student)</h3>
+                        {studentExams.length === 0 && <p className="text-sm text-gray-500">No exams scheduled for your courses.</p>}
+                        {studentExams.map(exam => (
+                            <div key={exam.id} className="border rounded p-3">
+                                <div className="font-medium">{exam.title} — {exam.courseCode} <span className="text-sm text-gray-500">({exam.date})</span></div>
+                                <div className="text-sm text-gray-600">{exam.description}</div>
+                                <div className="mt-2">
+                                    <h5 className="font-semibold">Result</h5>
+                                    <div>
+                                        {results.find(r => r.examId === exam.id && r.studentEmail === user.email)?.grade || 'Not released yet'}
+                                    </div>
+                                </div>
+                                <div className="mt-2">
+                                    <h5 className="font-semibold">Hall Tickets</h5>
+                                    <ul>
+                                        {hallTickets.filter(h => h.examId === exam.id && (!h.studentEmail || h.studentEmail === user.email)).map(h => (
+                                            <li key={h.id} className="py-1">
+                                                <button onClick={() => downloadDataUrl(h.fileDataUrl, h.fileName)} className="text-indigo-600 hover:underline">Download {h.fileName}</button>
+                                            </li>
+                                        ))}
+                                        {hallTickets.filter(h => h.examId === exam.id && (!h.studentEmail || h.studentEmail === user.email)).length === 0 && (
+                                            <li className="text-sm text-gray-500">No hall ticket available.</li>
+                                        )}
+                                    </ul>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                );
+            }
+
+            // Admin view: show everything (can be extended similarly to faculty)
+            if (user.role === 'admin') {
+                return (
+                    <div className="p-6 bg-white rounded-lg shadow-md space-y-4">
+                        <h3 className="text-xl font-bold text-gray-800">Exams & Results (Admin)</h3>
+                        <p className="text-sm text-gray-500">Admin has full access in this demo. Faculty-like controls are available to manage exams and hall tickets.</p>
+                        <div>
+                            {exams.map(exam => (
+                                <div key={exam.id} className="border rounded p-3 mb-2">
+                                    <div className="font-medium">{exam.title} — {exam.courseCode} <span className="text-sm text-gray-500">({exam.date})</span></div>
+                                    <div className="text-sm text-gray-600">{exam.description}</div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            }
+
+            return <p className="p-4 text-gray-600">Exams & Results module is not available for this role.</p>;
+        };
+
+        // Try to load persisted notifications from backend, then render the app
+        (async function initFromServer(){
+            try {
+                // load notifications if backend is available
+                const respNotes = await fetch('/api/notifications');
+                if (respNotes.ok) {
+                    const notes = await respNotes.json();
+                    // normalize to original shape used in the UI
+                    database.notifications = notes.map(n => ({ id: n.id, subject: n.subject, date: n.date, source: n.source, link: n.link }));
+                }
+                const respSmart = await fetch('/api/smartNotifications');
+                if (respSmart.ok) {
+                    const sns = await respSmart.json();
+                    database.smartNotifications = sns.map(s => ({ id: s.id, subject: s.subject, message: s.message, createdBy: s.createdBy, createdAt: s.createdAt || new Date().toISOString(), sendDate: s.sendDate, source: s.source || 'Admin' }));
+                }
+            } catch (e) {
+                // no backend available — keep in-memory demo data
+                console.warn('Backend not available, running in in-memory demo mode. Error:', e);
+            }
+            ReactDOM.render(<App />, document.getElementById('root'));
+        })();
+    </script>
+</body>
+</html>
